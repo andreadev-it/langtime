@@ -1,7 +1,7 @@
 use chrono::prelude::*;
 use chrono::Duration;
 use nom::branch::alt;
-use nom::character::complete::space1;
+use nom::character::complete::space0;
 use nom::sequence::tuple;
 use nom::{Parser, IResult};
 use nom::bytes::complete::tag;
@@ -105,10 +105,12 @@ pub fn parse_time_ampm(input: &str) -> IResult<&str, DateTime<Local>, ()> {
                 )
             ))
         ),
-        space1,
+        space0,
         alt((
             tag("a.m."),
-            tag("p.m.")
+            tag("am"),
+            tag("p.m."),
+            tag("pm")
         ))
     )).parse(input)?;
 
@@ -120,11 +122,14 @@ pub fn parse_time_ampm(input: &str) -> IResult<&str, DateTime<Local>, ()> {
 
     let mut hour = hour;
 
-    if ampm == "a.m." && hour == 12 {
-        hour = 0;
-    }
-    else if ampm == "p.m." && hour < 12 {
-        hour += 12;
+    match ampm {
+        "a.m." | "am" => {
+            if hour == 12 { hour = 0 }
+        },
+        "p.m." | "pm" => {
+            if hour < 12 { hour += 12 }
+        },
+        _ => ()
     }
 
     let mut minute = 0;
@@ -152,15 +157,4 @@ pub fn parse_time_ampm(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let dt = extract_datetime(dt_opt)?;
 
     Ok((tail, dt))
-}
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn parse_locale() {
-    }
 }

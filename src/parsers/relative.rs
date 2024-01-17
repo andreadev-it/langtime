@@ -53,6 +53,7 @@ pub fn date_ago(input: &str) -> IResult<&str, DateTime<Local>, ()> {
                 space1,
                 alt((
                     tag("day"),
+                    tag("week"),
                     tag("month"),
                     tag("year")
                 )),
@@ -68,6 +69,7 @@ pub fn date_ago(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     for (amount, _, timing, _, _) in data {
         match timing {
             "day" => dt -= Duration::days(amount),
+            "week" => dt -= Duration::weeks(amount),
             "month" => dt -= Duration::weeks(4 * amount),
             "year" => dt -= Duration::days(365 * amount),
             _ => ()
@@ -120,6 +122,7 @@ pub fn in_date(input: &str) -> IResult<&str, DateTime<Local>, ()> {
                 space1,
                 alt((
                     tag("day"),
+                    tag("week"),
                     tag("month"),
                     tag("year")
                 )),
@@ -134,6 +137,7 @@ pub fn in_date(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     for (amount, _, timing, _, _) in data {
         match timing {
             "day" => cur += Duration::days(amount),
+            "week" => cur += Duration::weeks(amount),
             "month" => cur += Duration::weeks(4 * amount),
             "year" => cur += Duration::days(365 * amount),
             _ => ()
