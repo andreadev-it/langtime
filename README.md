@@ -38,3 +38,10 @@ makes it extremely easy to add new formats to the parsable inputs.
 
 \* months and years are currently not calculated correctly: a month is
 considered as 4 weeks, a year as 365 days.
+
+### Full dates and times
+- [x] 2024-01-01T20:30:10
+- [x] yesterday at 17:00
+- [x] tomorrow at 8 p.m.
+- [x] 2 days ago at 5 a.m.
+- [ ] last friday at 9:00 
