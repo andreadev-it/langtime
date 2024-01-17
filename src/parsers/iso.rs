@@ -84,22 +84,51 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_iso_date_test() {
-    }
-
-    #[test]
     fn parse_iso_time_test() {
+        let (_, dt) = parse_iso_time("08:20").unwrap();
+        assert!(
+            dt.hour() == 8 &&
+            dt.minute() == 20
+        );
+
+        let (_, dt) = parse_iso_time("08:20:10").unwrap();
+        assert!(
+            dt.hour() == 8 &&
+            dt.minute() == 20 &&
+            dt.second() == 10
+        );
     }
 
     #[test]
-    #[should_panic]
+    fn parse_iso_date_test() {
+        let (_, dt) = parse_iso_date("2024-10-23").unwrap();
+        assert!(
+            dt.year() == 2024 &&
+            dt.month() == 10 &&
+            dt.day() == 23
+        );
+    }
+
+    #[test]
     fn parse_wrong_iso_date() {
-            parse_iso_date("12/12/2024").unwrap();
+        let mut results = vec![];
+        results.push(parse_iso_date("12/12/2024"));
+        results.push(parse_iso_date("2024-2-1"));
+        results.push(parse_iso_date("2024-33-33"));
+
+        assert!(
+            results.into_iter().all(|r| r.is_err())
+        );
     }
 
     #[test]
-    #[should_panic]
     fn parse_wrong_iso_time() {
-        parse_iso_time("05.12.32:000").unwrap();
+        let mut results = vec![];
+        results.push(parse_iso_time("1:2"));
+        results.push(parse_iso_time("10"));
+
+        assert!(
+            results.iter().all(|r| r.is_err()),
+        );
     }
 }
