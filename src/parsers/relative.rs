@@ -1,4 +1,4 @@
-use chrono::{DateTime, Local, Duration};
+use chrono::{DateTime, Local, Duration, Datelike, Weekday};
 use nom::{Parser, IResult};
 use nom::character::complete::{
     digit1,
@@ -10,7 +10,7 @@ use nom::multi::many1;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 
-pub fn time_ago(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+pub fn relative_time_past(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, (data, _)) = tuple((
         many1(
             tuple((
@@ -45,7 +45,7 @@ pub fn time_ago(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     Ok((tail, dt))
 }
 
-pub fn date_ago(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+pub fn relative_date_past(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, (data, _)) = tuple((
         many1(
             tuple((
@@ -79,7 +79,7 @@ pub fn date_ago(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     Ok((tail, dt))
 }
 
-pub fn in_time(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+pub fn relative_time_future(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, (_, _, data)) = tuple((
         tag("in"),
         space1,
@@ -112,7 +112,7 @@ pub fn in_time(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     Ok((tail, cur))
 }
 
-pub fn in_date(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+pub fn relative_date_future(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, (_, _, data)) = tuple((
         tag("in"),
         space1,
@@ -147,3 +147,48 @@ pub fn in_date(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     Ok((tail, cur))
 }
 
+pub fn relative_weekdays(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+    let (tail, (rel, _, day)) = tuple((
+        alt((
+            tag("next"),
+            tag("last")
+        )),
+        space1,
+        alt((
+            tag("monday"),
+            tag("tuesday"),
+            tag("wednsday"),
+            tag("thursday"),
+            tag("friday"),
+            tag("saturday"),
+            tag("sunday")
+        ))
+    )).parse(input)?;
+
+    let mut requested_weekday = 0;
+
+    requested_weekday = match day {
+        "monday" => 0,
+        "tuesday" => 1,
+        "wednsday" => 2,
+        "thursday" => 3,
+        "friday" => 4,
+        "saturday" => 5,
+        "sunday" => 6,
+        _ => -1
+    };
+
+    let mut dt = Local::now();
+
+    let days_to_add = 7 + match dt.weekday() {
+        Weekday::Mon => 0 + requested_weekday,
+        Weekday::Tue => 6 + requested_weekday,
+        Weekday::Wed => 5 + requested_weekday,
+        Weekday::Thu => 4 + requested_weekday,
+        Weekday::Fri => 3 + requested_weekday,
+        Weekday::Sat => 2 + requested_weekday,
+        Weekday::Sun => 1 + requested_weekday,
+    };
+
+    todo!();
+}

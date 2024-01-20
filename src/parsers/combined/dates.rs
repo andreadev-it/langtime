@@ -8,8 +8,8 @@ use crate::parsers::locale::{
     named_dates
 };
 use crate::parsers::relative::{
-    date_ago,
-    in_date
+    relative_date_past,
+    relative_date_future
 };
 
 pub fn dates(input: &str) -> IResult<&str, DateTime<Local>, ()> {
@@ -17,8 +17,8 @@ pub fn dates(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         parse_iso_date,
         parse_dmy,
         named_dates,
-        date_ago,
-        in_date
+        relative_date_past,
+        relative_date_future
     ))(input)?;
 
     Ok(res)

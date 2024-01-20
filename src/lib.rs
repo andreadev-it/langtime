@@ -1,7 +1,12 @@
 use chrono::prelude::*;
 use nom::branch::alt;
 use parsers::combined::{full_datetime, dates, times};
-use parsers::relative::{time_ago, date_ago, in_time, in_date};
+use parsers::relative::{
+    relative_time_past,
+    relative_date_past,
+    relative_time_future,
+    relative_date_future
+};
 
 mod parsers;
 mod utils;
@@ -11,10 +16,10 @@ pub fn parse(input: &str) -> Result<DateTime<Local>, nom::Err<()>> {
         times,
         full_datetime,
         dates,
-        time_ago,
-        date_ago,
-        in_time,
-        in_date
+        relative_time_past,
+        relative_date_past,
+        relative_time_future,
+        relative_date_future
     ));
 
     let (_tail, dt) = alt_parse(&input)?;
