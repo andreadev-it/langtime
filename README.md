@@ -31,8 +31,9 @@ makes it extremely easy to add new formats to the parsable inputs.
 - [x] in 5 hours
 - [x] 8 minutes ago
 - [x] 2 hours, 8 minutes and 10 seconds ago
-- [ ] last friday
-- [ ] next tuesday
+- [x] last friday
+- [x] next tuesday
+- [ ] saturday / this saturday
 - [x] 2 days ago
 - [x] in 3 months *
 
@@ -44,4 +45,4 @@ considered as 4 weeks, a year as 365 days.
 - [x] yesterday at 17:00
 - [x] tomorrow at 8 p.m.
 - [x] 2 days ago at 5 a.m.
-- [ ] last friday at 9:00 
+- [x] last friday at 9:00 
