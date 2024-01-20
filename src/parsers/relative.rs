@@ -1,4 +1,4 @@
-use chrono::{DateTime, Local, Duration, Datelike, Weekday};
+use chrono::{DateTime, Local, Duration, Datelike};
 use nom::{Parser, IResult};
 use nom::character::complete::{
     digit1,
@@ -9,6 +9,8 @@ use nom::sequence::tuple;
 use nom::multi::many1;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
+
+use crate::utils::{weekday_string_to_int, weekday_to_int};
 
 pub fn relative_time_past(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, (data, _)) = tuple((
@@ -165,30 +167,30 @@ pub fn relative_weekdays(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         ))
     )).parse(input)?;
 
-    let mut requested_weekday = 0;
+    let dt = Local::now();
 
-    requested_weekday = match day {
-        "monday" => 0,
-        "tuesday" => 1,
-        "wednsday" => 2,
-        "thursday" => 3,
-        "friday" => 4,
-        "saturday" => 5,
-        "sunday" => 6,
-        _ => -1
+    let to = weekday_string_to_int(day);
+
+    if to.is_err() {
+        return Err(nom::Err::<()>::Error(()));
+    }
+
+    let to = to.unwrap();
+
+    let from = weekday_to_int(dt.weekday());
+
+    // Unwrap is safe because of previous check
+    let days_diff = match rel {
+        "next" => 7 + (to - from),
+        "last" => if to >= from {
+            - (7 + (from - to))
+            } else {
+                to - from
+            },
+        _ => -1 // this is impossible, the nom parser will error
     };
 
-    let mut dt = Local::now();
+    let result = dt + Duration::days(days_diff);
 
-    let days_to_add = 7 + match dt.weekday() {
-        Weekday::Mon => 0 + requested_weekday,
-        Weekday::Tue => 6 + requested_weekday,
-        Weekday::Wed => 5 + requested_weekday,
-        Weekday::Thu => 4 + requested_weekday,
-        Weekday::Fri => 3 + requested_weekday,
-        Weekday::Sat => 2 + requested_weekday,
-        Weekday::Sun => 1 + requested_weekday,
-    };
-
-    todo!();
+    Ok((tail, result))
 }
