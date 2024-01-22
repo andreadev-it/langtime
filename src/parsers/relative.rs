@@ -1,4 +1,4 @@
-use chrono::{DateTime, Local, Duration, Datelike};
+use chrono::{DateTime, Local, Duration, Datelike, SubsecRound};
 use nom::{Parser, IResult};
 use nom::character::complete::{
     digit1,
@@ -41,7 +41,7 @@ pub fn relative_time_past(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         }
     }
 
-    let mut dt = Local::now();
+    let mut dt = Local::now().round_subsecs(0);
     dt -= Duration::seconds(seconds as i64);
 
     Ok((tail, dt))
@@ -66,7 +66,7 @@ pub fn relative_date_past(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         tag(" ago")
     )).parse(input)?;
 
-    let mut dt = Local::now();
+    let mut dt = Local::now().round_subsecs(0);
 
     for (amount, _, timing, _, _) in data {
         match timing {
@@ -100,7 +100,7 @@ pub fn relative_time_future(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         )
     )).parse(input)?;
 
-    let mut cur = Local::now();
+    let mut cur = Local::now().round_subsecs(0);
 
     for (amount, _, timing, _, _) in data {
         match timing {
@@ -134,7 +134,7 @@ pub fn relative_date_future(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         )
     )).parse(input)?;
 
-    let mut cur = Local::now();
+    let mut cur = Local::now().round_subsecs(0);
 
     for (amount, _, timing, _, _) in data {
         match timing {
@@ -167,7 +167,7 @@ pub fn relative_weekdays(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         ))
     )).parse(input)?;
 
-    let dt = Local::now();
+    let dt = Local::now().round_subsecs(0);
 
     let to = weekday_string_to_int(day);
 

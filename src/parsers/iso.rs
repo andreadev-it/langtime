@@ -44,7 +44,7 @@ pub fn parse_iso_time(input: &str) -> IResult<&str, DateTime<chrono::Local>, ()>
         second = sec;
     }
 
-    let now = Local::now();
+    let now = Local::now().round_subsecs(0);
     let dt_opt = Local.with_ymd_and_hms(
         now.year(),
         now.month(),

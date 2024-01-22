@@ -45,7 +45,7 @@ pub fn named_dates(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         tag("tomorrow")
     )).parse(input)?;
 
-    let cur = Local::now();
+    let cur = Local::now().round_subsecs(0);
 
     match data {
         "yesterday" => Ok((tail, cur - Duration::days(1))),
@@ -75,7 +75,7 @@ pub fn parse_time(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         second = sec;
     }
 
-    let now = Local::now();
+    let now = Local::now().round_subsecs(0);
     let dt_opt = Local.with_ymd_and_hms(
         now.year(),
         now.month(),
@@ -144,7 +144,7 @@ pub fn parse_time_ampm(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         None => ()
     };
 
-    let now = Local::now();
+    let now = Local::now().round_subsecs(0);
     let dt_opt = Local.with_ymd_and_hms(
         now.year(),
         now.month(),
