@@ -14,6 +14,6 @@ fn main() {
 
     match parse(args.first().unwrap()) {
         Ok(dt) => println!("{:?}", dt),
-        Err(_) => println!("Cannot parse input as date")
+        Err(_) => println!("Cannot parse input as a date")
     }
 }
