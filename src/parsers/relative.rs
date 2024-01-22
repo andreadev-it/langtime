@@ -42,7 +42,7 @@ pub fn relative_time_past(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     }
 
     let mut dt = Local::now();
-    dt = dt - Duration::seconds(seconds as i64);
+    dt -= Duration::seconds(seconds as i64);
 
     Ok((tail, dt))
 }

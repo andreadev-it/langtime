@@ -16,7 +16,7 @@ pub fn parse_iso_date(input: &str) -> IResult<&str, DateTime<chrono::Local>, ()>
         day2
     )).parse(input)?;
 
-    let dt_opt = Local.with_ymd_and_hms(year as i32, month as u32, day as u32, 0, 0, 0);
+    let dt_opt = Local.with_ymd_and_hms(year, month, day, 0, 0, 0);
     
     let dt = extract_datetime(dt_opt)?;
 
@@ -31,7 +31,7 @@ pub fn parse_iso_time(input: &str) -> IResult<&str, DateTime<chrono::Local>, ()>
         opt(
             tuple((
                 tag(":"),
-                second1,
+                second2,
             ))
         )
     )).parse(input)?;
@@ -40,10 +40,9 @@ pub fn parse_iso_time(input: &str) -> IResult<&str, DateTime<chrono::Local>, ()>
 
     let mut second = 0;
 
-    match opt_sec {
-        Some((_, sec)) => second = sec,
-        None => ()
-    };
+    if let Some((_, sec)) = opt_sec {
+        second = sec;
+    }
 
     let now = Local::now();
     let dt_opt = Local.with_ymd_and_hms(

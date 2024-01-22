@@ -24,6 +24,7 @@ pub fn parse_dmy(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     Ok((tail, dt))
 }
 
+#[allow(dead_code)]
 pub fn parse_mdy(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, month) = month1(input)?;
     let (tail, _) = tag("/").parse(tail)?;
@@ -70,10 +71,9 @@ pub fn parse_time(input: &str) -> IResult<&str, DateTime<Local>, ()> {
 
     let mut second = 0;
 
-    match opt_sec {
-        Some((_, sec)) => second = sec,
-        None => ()
-    };
+    if let Some((_, sec)) = opt_sec {
+        second = sec;
+    }
 
     let now = Local::now();
     let dt_opt = Local.with_ymd_and_hms(

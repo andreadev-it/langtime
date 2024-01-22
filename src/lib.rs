@@ -1,3 +1,5 @@
+#![warn(missing_docs)]
+
 use chrono::prelude::*;
 use nom::branch::alt;
 use parsers::combined::{full_datetime, dates, times};
@@ -22,7 +24,7 @@ pub fn parse(input: &str) -> Result<DateTime<Local>, nom::Err<()>> {
         relative_date_future
     ));
 
-    let (_tail, dt) = alt_parse(&input)?;
+    let (_tail, dt) = alt_parse(input)?;
 
     Ok(dt)
 }

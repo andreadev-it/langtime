@@ -1,3 +1,4 @@
+
 use nom::{Parser, IResult};
 use nom::bytes::complete::{take, take_while, take_while_m_n};
 use nom::combinator::map_res;
@@ -81,6 +82,7 @@ pub fn second2(input: &str) -> IResult<&str, u32, ()> {
     ).parse(input)
 }
 
+#[allow(dead_code)]
 pub fn millisecond(input: &str) -> IResult<&str, u32, ()> {
     map_res(
         take(3u8),
