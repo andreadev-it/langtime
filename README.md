@@ -1,14 +1,15 @@
 # Langtime - Parsing dates in rust
 This library is a personal project, currently in development, that
-aims at easily allow rust programmer to parse dates written in the
+aims at easily allow rust programmers to parse dates written in the
 english language, both absolute and relative. These are some examples
-of dates that will be parsed:
+of dates that you can currently parse:
 - `2024-01-01 at 20:15`
 - `28/02/2024 at 10 a.m.`
 - `25 minutes ago`
 
 Why creating this repo when [chrono-english](https://github.com/stevedonovan/chrono-english)
-already exists? Well for two reasons: first, I didn't knew it exists.
+already exists? Well for two reasons.
+First of all, I didn't knew it existed.
 Second, there are some formats, or combination thereof, that are
 not parsable with chrono_english.
 
