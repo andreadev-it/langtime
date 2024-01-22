@@ -2,6 +2,13 @@
 name = "langtime"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "A rust library to parse english dates"
+documentation = "https://docs.rs/langtime/latest/"
+repository = "https://github.com/andreadev-it/langtime"
+keywords = ["datetime", "parsing", "english"]
+categories = ["date-and-time", "localization", "parser-implementations"]
+authors = ["Andrea Dragotta"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
