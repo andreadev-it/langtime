@@ -32,9 +32,7 @@ use nom::branch::alt;
 use parsers::combined::{full_datetime, dates, times};
 use parsers::relative::{
     relative_time_past,
-    relative_date_past,
     relative_time_future,
-    relative_date_future
 };
 use errors::NotParsable;
 
@@ -51,9 +49,7 @@ pub fn parse(input: &str) -> Result<DateTime<Local>, NotParsable> {
         full_datetime,
         dates,
         relative_time_past,
-        relative_date_past,
         relative_time_future,
-        relative_date_future
     ));
 
     match alt_parse(input) {

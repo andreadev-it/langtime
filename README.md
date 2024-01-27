@@ -16,6 +16,14 @@ not parsable with chrono_english.
 This library uses [nom](https://github.com/rust-bakery/nom), which
 makes it extremely easy to add new formats to the parsable inputs.
 
+## Next goals
+- [ ] Expand allowed tokens to separate parts of sentences
+- [ ] Implement unit tests
+- [ ] Add missing time format
+- [ ] Cleanup text before parsing
+- [ ] Add configuration for english dialects (UK/US)
+- [ ] Add configuration to force matching to the full string
+
 ## Parsable data
 ### Dates
 - [x] 2024-01-20 (ISO)
@@ -34,7 +42,7 @@ makes it extremely easy to add new formats to the parsable inputs.
 - [x] 2 hours, 8 minutes and 10 seconds ago
 - [x] last friday
 - [x] next tuesday
-- [ ] saturday / this saturday
+- [x] saturday / this saturday
 - [x] 2 days ago
 - [x] in 3 months *
 

@@ -9,7 +9,7 @@ use crate::parsers::locale::{
 };
 use crate::parsers::relative::{
     relative_date_past,
-    relative_date_future, relative_weekdays
+    relative_date_future, relative_weekdays, current_weekdays
 };
 
 pub fn dates(input: &str) -> IResult<&str, DateTime<Local>, ()> {
@@ -20,6 +20,7 @@ pub fn dates(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         relative_date_past,
         relative_date_future,
         relative_weekdays,
+        current_weekdays
     ))(input)?;
 
     Ok(res)

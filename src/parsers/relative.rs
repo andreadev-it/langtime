@@ -194,3 +194,37 @@ pub fn relative_weekdays(input: &str) -> IResult<&str, DateTime<Local>, ()> {
 
     Ok((tail, result))
 }
+
+pub fn current_weekdays(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+    let (tail, (_, day)) = tuple((
+        opt(tag("this ")),
+        alt((
+            tag("monday"),
+            tag("tuesday"),
+            tag("wednsday"),
+            tag("thursday"),
+            tag("friday"),
+            tag("saturday"),
+            tag("sunday")
+        ))
+    )).parse(input)?;
+
+    let dt = Local::now().round_subsecs(0);
+    let cur_weekday = weekday_to_int(dt.weekday());
+
+    let to = weekday_string_to_int(day);
+
+    if to.is_err() {
+        return Err(nom::Err::<()>::Error(()));
+    }
+
+    let to = to.unwrap();
+
+    if cur_weekday >= to {
+        return Err(nom::Err::<()>::Error(()));
+    }
+
+    let result = dt + Duration::days(to - cur_weekday);
+
+    Ok((tail, result))
+}
