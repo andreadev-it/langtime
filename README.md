@@ -19,7 +19,7 @@ makes it extremely easy to add new formats to the parsable inputs.
 ## Next goals
 - [ ] Expand allowed tokens to separate parts of sentences
 - [ ] Implement unit tests
-- [ ] Add missing time format
+- [x] Add missing time format
 - [ ] Cleanup text before parsing
 - [ ] Add configuration for english dialects (UK/US)
 - [ ] Add configuration to force matching to the full string
@@ -34,7 +34,7 @@ makes it extremely easy to add new formats to the parsable inputs.
 - [x] 17:00
 - [x] 17:00:30
 - [x] 5 p.m. / 5pm
-- [ ] 8 o'clock / half past 9 / a quarter to 10
+- [x] 8 o'clock / half past 9 / a quarter to 10
 
 ### Relative times and dates
 - [x] in 5 hours

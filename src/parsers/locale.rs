@@ -158,3 +158,58 @@ pub fn parse_time_ampm(input: &str) -> IResult<&str, DateTime<Local>, ()> {
 
     Ok((tail, dt))
 }
+
+pub fn parse_time_spelled(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+    let (tail, res) = alt((
+        parse_oclock,
+        parse_subminutes
+    )).parse(input)?;
+
+    Ok((tail, res))
+}
+
+fn parse_oclock(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+    let (tail, (hour, _)) = tuple((
+        hour1,
+        tag(" o'clock")
+    )).parse(input)?;
+
+    let now = Local::now().round_subsecs(0);
+    let dt_opt = Local.with_ymd_and_hms(now.year(), now.month(), now.day(), hour, 0, 0);
+    let dt = extract_datetime(dt_opt)?;
+
+    Ok((tail, dt))
+}
+
+fn parse_subminutes(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+    let (tail, (amount, rel, hour)) = tuple((
+        alt((
+            tag("half "),
+            tag("a quarter ")
+        )),
+        alt((
+            tag("past "),
+            tag("to ")
+        )),
+        hour1
+    )).parse(input)?;
+
+    let minutes = match amount {
+        "half " => 30,
+        "a quarter " => 15,
+        _ => 0 // this will never happen
+    };
+
+    let duration = match rel {
+        "past " => Duration::minutes(minutes),
+        "to " => Duration::minutes(-1 * minutes),
+        _ => Duration::minutes(0) // this will never happen
+    };
+
+    let now = Local::now();
+    let dt_opt = Local.with_ymd_and_hms(now.year(), now.month(), now.day(), hour, 0, 0);
+    let mut dt = extract_datetime(dt_opt)?;
+    dt += duration;
+
+    Ok((tail, dt))
+}
