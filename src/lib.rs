@@ -1,13 +1,13 @@
 #![warn(missing_docs)]
 
-//! Simple to use crate for converting english-spelled 
+//! Easy to use crate for converting english-spelled 
 //! dates to chrono DateTimes.
 //!
 //! This crate does a similar job to what [`chrono_english`]
 //! already does, but using [`nom`] parsers. This has two
 //! advantages:
 //! - new formats are easier to add
-//! - combination of date and time formats are declarative
+//! - combinations of date and time formats are declarative
 //!
 //! Right now, this crate only exposes one function: `parse`.
 //! This function should never panic, but since this library
