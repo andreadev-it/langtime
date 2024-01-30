@@ -1,6 +1,6 @@
 # Langtime - Parsing dates in rust
 This library is a personal project, currently in development, that
-aims at easily allow rust programmers to parse dates written in the
+allows rust programmers to parse dates written in the
 english language, both absolute and relative. These are some examples
 of dates that you can currently parse:
 - `2024-01-01 at 20:15`
@@ -18,6 +18,7 @@ makes it extremely easy to add new formats to the parsable inputs.
 
 ## Next goals
 - [ ] Expand allowed tokens to separate parts of sentences
+- [ ] Correct month and year calculation
 - [ ] Implement unit tests
 - [x] Add missing time format
 - [ ] Cleanup text before parsing
