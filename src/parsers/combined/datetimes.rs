@@ -1,6 +1,7 @@
 use chrono::prelude::*;
 use nom::IResult;
 use nom::branch::alt;
+use nom::character::complete::space1;
 use nom::combinator::map_res;
 use nom::sequence::tuple;
 use nom::bytes::complete::tag;
@@ -16,7 +17,10 @@ pub fn full_datetime(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         map_res(
             tuple((
                 dates,
-                tag(" at "),
+                alt((
+                    tag(" at "),
+                    space1
+                )),
                 times
             )),
             |(date, _, time)| join_date_time(date, time)

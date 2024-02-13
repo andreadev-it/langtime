@@ -30,6 +30,8 @@ makes it extremely easy to add new formats to the parsable inputs.
 - [x] 2024-01-20 (ISO)
 - [x] 20/01/2024
 - [x] yesterday / tomorrow
+- [ ] 01/2024 (beginning of the month)
+- [ ] january 2024 (same as above)
 
 ### Times
 - [x] 17:00
