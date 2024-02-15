@@ -42,7 +42,8 @@ pub fn parse_mdy(input: &str) -> IResult<&str, DateTime<Local>, ()> {
 pub fn named_dates(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, data) = alt((
         tag("yesterday"),
-        tag("tomorrow")
+        tag("tomorrow"),
+        tag("today")
     )).parse(input)?;
 
     let cur = Local::now().round_subsecs(0);
@@ -50,6 +51,7 @@ pub fn named_dates(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     match data {
         "yesterday" => Ok((tail, cur - Duration::days(1))),
         "tomorrow" => Ok((tail, cur + Duration::days(1))),
+        "today" => Ok((tail, cur)),
         _ => Err(nom::Err::<()>::Error(()))
     }
 }
