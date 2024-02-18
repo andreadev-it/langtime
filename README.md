@@ -18,7 +18,7 @@ makes it extremely easy to add new formats to the parsable inputs.
 
 ## Next goals
 - [ ] Expand allowed tokens to separate parts of sentences
-- [ ] Correct month and year calculation
+- [x] Correct month and year calculation
 - [ ] Implement unit tests
 - [x] Add missing time format
 - [ ] Cleanup text before parsing
