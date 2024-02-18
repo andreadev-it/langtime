@@ -10,7 +10,7 @@ use nom::multi::many1;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 
-use crate::utils::{weekday_string_to_int, weekday_to_int};
+use crate::utils::{weekday_string_to_int, weekday_to_int, next_month, next_year, last_month, last_year};
 
 pub fn relative_time_past(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, (data, _)) = tuple((
@@ -72,8 +72,8 @@ pub fn relative_date_past(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         match timing {
             "day" => dt -= Duration::days(amount),
             "week" => dt -= Duration::weeks(amount),
-            "month" => dt -= Duration::weeks(4 * amount),
-            "year" => dt -= Duration::days(365 * amount),
+            "month" => dt = last_month(dt)?,
+            "year" => dt = last_year(dt)?,
             _ => ()
         }
     }
@@ -140,8 +140,8 @@ pub fn relative_date_future(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         match timing {
             "day" => cur += Duration::days(amount),
             "week" => cur += Duration::weeks(amount),
-            "month" => cur += Duration::weeks(4 * amount),
-            "year" => cur += Duration::days(365 * amount),
+            "month" => cur = next_month(cur)?,
+            "year" => cur = next_year(cur)?,
             _ => ()
         };
     }

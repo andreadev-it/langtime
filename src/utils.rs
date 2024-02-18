@@ -5,7 +5,8 @@ use chrono::{
     TimeZone,
     Datelike,
     Timelike,
-    Weekday
+    Weekday,
+    Duration
 };
 
 pub fn extract_datetime(res: LocalResult<DateTime<Local>>) -> Result<DateTime<Local>, nom::Err<()>> {
@@ -52,4 +53,138 @@ pub fn weekday_string_to_int(day: &str) -> Result<i64, ()> {
         "sunday"   => Ok(6),
         _ => Err(())
     }
+}
+
+pub fn end_of_month(day: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>> {
+    let mut month = day.month();
+    let mut year = day.year();
+
+    month += 1;
+
+    if month > 12 {
+        month = 1;
+        year += 1;
+    }
+
+    let next_month = extract_datetime(Local.with_ymd_and_hms(year, month, 1, 23, 59, 59))?;
+
+    Ok(next_month - Duration::days(1))
+}
+
+pub fn next_month(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>> {
+    let mut month = date.month();
+    let mut year = date.year();
+    let mut day = date.day();
+
+    month += 1;
+    if month > 12 {
+        month = 1;
+        year += 1;
+    }
+
+    let next_month = extract_datetime(Local.with_ymd_and_hms(year, month, 1, 0, 0, 0))?;
+
+    let eonm = end_of_month(next_month)?; // End Of Next Month
+    let eonm_day = eonm.day();
+
+    if day > eonm_day {
+        day = eonm_day;
+    }
+
+    Ok(extract_datetime(Local.with_ymd_and_hms(
+        year, 
+        month, 
+        day, 
+        date.hour(), 
+        date.minute(), 
+        date.second()
+    ))?)
+}
+
+pub fn next_year(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>> {
+    let year = date.year();
+    let mut day = date.day();
+
+    let next_year_first_of_month = extract_datetime(Local.with_ymd_and_hms(
+        year + 1, 
+        date.month(), 
+        1, 
+        date.hour(), 
+        date.minute(), 
+        date.second()
+    ))?;
+
+    // All this just to check for leap years
+    let eom = end_of_month(next_year_first_of_month)?;
+    if day > eom.day() {
+        day = eom.day();
+    }
+
+    Ok(extract_datetime(Local.with_ymd_and_hms(
+        year + 1,
+        date.month(),
+        day,
+        date.hour(),
+        date.minute(),
+        date.second()
+    ))?)
+}
+
+pub fn last_month(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>> {
+    let mut month = date.month();
+    let mut year = date.year();
+    let mut day = date.day();
+
+    month -= 1;
+    if month == 0 {
+        month = 12;
+        year -= 1;
+    }
+
+    let last_month = extract_datetime(Local.with_ymd_and_hms(year, month, 1, 0, 0, 0))?;
+
+    let eolm = end_of_month(last_month)?; // End Of Last Month
+    let eolm_day = eolm.day();
+
+    if day > eolm_day {
+        day = eolm_day;
+    }
+
+    Ok(extract_datetime(Local.with_ymd_and_hms(
+        year, 
+        month, 
+        day, 
+        date.hour(), 
+        date.minute(), 
+        date.second()
+    ))?)
+}
+
+pub fn last_year(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>> {
+    let year = date.year();
+    let mut day = date.day();
+
+    let last_year_first_of_month = extract_datetime(Local.with_ymd_and_hms(
+        year - 1, 
+        date.month(), 
+        1, 
+        date.hour(), 
+        date.minute(), 
+        date.second()
+    ))?;
+
+    // All this just to check for leap years
+    let eom = end_of_month(last_year_first_of_month)?;
+    if day > eom.day() {
+        day = eom.day();
+    }
+
+    Ok(extract_datetime(Local.with_ymd_and_hms(
+        year - 1,
+        date.month(),
+        day,
+        date.hour(),
+        date.minute(),
+        date.second()
+    ))?)
 }
