@@ -71,20 +71,20 @@ pub fn end_of_month(day: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()
     Ok(next_month - Duration::days(1))
 }
 
-pub fn next_month(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>> {
+pub fn month_future(date: DateTime<Local>, amount: u32) -> Result<DateTime<Local>, nom::Err<()>> {
     let mut month = date.month();
     let mut year = date.year();
     let mut day = date.day();
 
-    month += 1;
-    if month > 12 {
-        month = 1;
+    month += amount;
+    while month > 12 {
+        month -= 12;
         year += 1;
     }
 
-    let next_month = extract_datetime(Local.with_ymd_and_hms(year, month, 1, 0, 0, 0))?;
+    let future_month = extract_datetime(Local.with_ymd_and_hms(year, month, 1, 0, 0, 0))?;
 
-    let eonm = end_of_month(next_month)?; // End Of Next Month
+    let eonm = end_of_month(future_month)?; // End Of Next Month
     let eonm_day = eonm.day();
 
     if day > eonm_day {
@@ -101,12 +101,12 @@ pub fn next_month(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>
     ))?)
 }
 
-pub fn next_year(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>> {
+pub fn year_future(date: DateTime<Local>, amount: i32) -> Result<DateTime<Local>, nom::Err<()>> {
     let year = date.year();
     let mut day = date.day();
 
     let next_year_first_of_month = extract_datetime(Local.with_ymd_and_hms(
-        year + 1, 
+        year + amount, 
         date.month(), 
         1, 
         date.hour(), 
@@ -121,7 +121,7 @@ pub fn next_year(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>>
     }
 
     Ok(extract_datetime(Local.with_ymd_and_hms(
-        year + 1,
+        year + amount as i32,
         date.month(),
         day,
         date.hour(),
@@ -130,18 +130,18 @@ pub fn next_year(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>>
     ))?)
 }
 
-pub fn last_month(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>> {
-    let mut month = date.month();
+pub fn month_past(date: DateTime<Local>, amount: i32) -> Result<DateTime<Local>, nom::Err<()>> {
+    let mut month = date.month() as i32;
     let mut year = date.year();
     let mut day = date.day();
 
-    month -= 1;
-    if month == 0 {
-        month = 12;
+    month -= amount;
+    while month <= 0 {
+        month += 12;
         year -= 1;
     }
 
-    let last_month = extract_datetime(Local.with_ymd_and_hms(year, month, 1, 0, 0, 0))?;
+    let last_month = extract_datetime(Local.with_ymd_and_hms(year, month as u32, 1, 0, 0, 0))?;
 
     let eolm = end_of_month(last_month)?; // End Of Last Month
     let eolm_day = eolm.day();
@@ -152,7 +152,7 @@ pub fn last_month(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>
 
     Ok(extract_datetime(Local.with_ymd_and_hms(
         year, 
-        month, 
+        month as u32,
         day, 
         date.hour(), 
         date.minute(), 
@@ -160,12 +160,12 @@ pub fn last_month(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>
     ))?)
 }
 
-pub fn last_year(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>> {
+pub fn year_past(date: DateTime<Local>, amount: i32) -> Result<DateTime<Local>, nom::Err<()>> {
     let year = date.year();
     let mut day = date.day();
 
     let last_year_first_of_month = extract_datetime(Local.with_ymd_and_hms(
-        year - 1, 
+        year - amount, 
         date.month(), 
         1, 
         date.hour(), 
@@ -180,7 +180,7 @@ pub fn last_year(date: DateTime<Local>) -> Result<DateTime<Local>, nom::Err<()>>
     }
 
     Ok(extract_datetime(Local.with_ymd_and_hms(
-        year - 1,
+        year - amount,
         date.month(),
         day,
         date.hour(),

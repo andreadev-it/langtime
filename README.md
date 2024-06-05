@@ -1,20 +1,61 @@
 # Langtime - Parsing dates in rust
-This library is a personal project, currently in development, that
-allows rust programmers to parse dates written in the
-english language, both absolute and relative. These are some examples
-of dates that you can currently parse:
+This library is a personal project that allows rust programmers to 
+parse dates written in the english language, both absolute and relative.
+These are some examples of dates that you can currently parse:
 - `2024-01-01 at 20:15`
 - `28/02/2024 at 10 a.m.`
 - `25 minutes ago`
 
 Why creating this repo when [chrono-english](https://github.com/stevedonovan/chrono-english)
-already exists? Well for two reasons.
-First of all, I didn't knew it existed.
+already exists? Well for two reasons. First of all, I didn't knew it existed.
 Second, there are some formats, or combination thereof, that are
 not parsable with chrono_english.
 
 This library uses [nom](https://github.com/rust-bakery/nom), which
 makes it extremely easy to add new formats to the parsable inputs.
+
+## How to use it
+The most basic use of this library looks like this:
+
+```rust
+fn main() {
+    match langtime::parse("12/05/2024 at 8pm") {
+        Ok(datetime) => println!("{:?}", datetime),
+        Err(_) => println!("Cannot parse input as a date")
+    };
+}
+```
+
+By default, the parse function will discard any input that
+is found beyond the datetime string. For example, this code
+would also correctly match a string such as "12/05/2024 is the date",
+even though "is the date" is not recognized as a time or date format.
+
+There are some options that you can pass through a configuration
+struct. The first one is the english dialect (US or UK). This
+is currently only used to discern whether the date format for the
+language is "dd/mm/yyyy" or "mm/dd/yyyy". 
+Then, you can also force the library to check that the full string is
+parsable as a date, so that the text "12/05/2024 is the date" will not 
+be considered correct anymore, and will result in an error.
+
+Here is how you can do it:
+
+```rust
+use langtime::{parse_with_config, ParseConfig, Dialect};
+
+fn main() {
+    let config = ParseConfig {
+        dialect: Dialect::US,
+        full_string_match: true
+    };
+    
+    match parse_with_config("05/23/2024 at 9pm", &config) {
+        Ok(datetime) => println!("{:?}", datetime),
+        Err(_) => println!("Cannot parse input as a date")
+    }
+}
+```
 
 ## Next goals
 - [ ] Expand allowed tokens to separate parts of sentences
@@ -22,8 +63,8 @@ makes it extremely easy to add new formats to the parsable inputs.
 - [ ] Implement unit tests
 - [x] Add missing time format
 - [ ] Cleanup text before parsing
-- [ ] Add configuration for english dialects (UK/US)
-- [ ] Add configuration to force matching to the full string
+- [x] Add configuration for english dialects (UK/US)
+- [x] Add configuration to force matching to the full string
 
 ## Parsable data
 ### Dates
@@ -47,10 +88,7 @@ makes it extremely easy to add new formats to the parsable inputs.
 - [x] next tuesday
 - [x] saturday / this saturday
 - [x] 2 days ago
-- [x] in 3 months *
-
-\* months and years are currently not calculated correctly: a month is
-considered as 4 weeks, a year as 365 days.
+- [x] in 3 months
 
 ### Full dates and times
 - [x] 2024-01-01T20:30:10

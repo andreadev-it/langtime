@@ -10,7 +10,7 @@ use nom::multi::many1;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 
-use crate::utils::{weekday_string_to_int, weekday_to_int, next_month, next_year, last_month, last_year};
+use crate::utils::{weekday_string_to_int, weekday_to_int, month_future, year_future, month_past, year_past};
 
 pub fn relative_time_past(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, (data, _)) = tuple((
@@ -51,7 +51,7 @@ pub fn relative_date_past(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, (data, _)) = tuple((
         many1(
             tuple((
-                map_res(digit1, |s: &str| s.parse::<i64>()),
+                map_res(digit1, |s: &str| s.parse::<u32>()),
                 space1,
                 alt((
                     tag("day"),
@@ -70,10 +70,10 @@ pub fn relative_date_past(input: &str) -> IResult<&str, DateTime<Local>, ()> {
 
     for (amount, _, timing, _, _) in data {
         match timing {
-            "day" => dt -= Duration::days(amount),
-            "week" => dt -= Duration::weeks(amount),
-            "month" => dt = last_month(dt)?,
-            "year" => dt = last_year(dt)?,
+            "day" => dt -= Duration::days(amount as i64),
+            "week" => dt -= Duration::weeks(amount as i64),
+            "month" => dt = month_past(dt, amount as i32)?,
+            "year" => dt = year_past(dt, amount as i32)?,
             _ => ()
         }
     }
@@ -100,18 +100,18 @@ pub fn relative_time_future(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         )
     )).parse(input)?;
 
-    let mut cur = Local::now().round_subsecs(0);
+    let mut dt = Local::now().round_subsecs(0);
 
     for (amount, _, timing, _, _) in data {
         match timing {
-            "hour" => cur += Duration::seconds(60 * 60 * amount),
-            "minute" => cur += Duration::seconds(60 * amount),
-            "second" => cur += Duration::seconds(amount),
+            "hour" => dt += Duration::seconds(60 * 60 * amount),
+            "minute" => dt += Duration::seconds(60 * amount),
+            "second" => dt += Duration::seconds(amount),
             _ => ()
         };
     }
 
-    Ok((tail, cur))
+    Ok((tail, dt))
 }
 
 pub fn relative_date_future(input: &str) -> IResult<&str, DateTime<Local>, ()> {
@@ -120,7 +120,7 @@ pub fn relative_date_future(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         space1,
         many1(
             tuple((
-                map_res(digit1, |s: &str| s.parse::<i64>()),
+                map_res(digit1, |s: &str| s.parse::<u32>()),
                 space1,
                 alt((
                     tag("day"),
@@ -134,19 +134,19 @@ pub fn relative_date_future(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         )
     )).parse(input)?;
 
-    let mut cur = Local::now().round_subsecs(0);
+    let mut dt = Local::now().round_subsecs(0);
 
     for (amount, _, timing, _, _) in data {
         match timing {
-            "day" => cur += Duration::days(amount),
-            "week" => cur += Duration::weeks(amount),
-            "month" => cur = next_month(cur)?,
-            "year" => cur = next_year(cur)?,
+            "day" => dt += Duration::days(amount as i64),
+            "week" => dt += Duration::weeks(amount as i64),
+            "month" => dt = month_future(dt, amount)?,
+            "year" => dt = year_future(dt, amount as i32)?,
             _ => ()
         };
     }
 
-    Ok((tail, cur))
+    Ok((tail, dt))
 }
 
 pub fn relative_weekdays(input: &str) -> IResult<&str, DateTime<Local>, ()> {

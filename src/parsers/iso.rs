@@ -23,6 +23,7 @@ pub fn parse_iso_date(input: &str) -> IResult<&str, DateTime<chrono::Local>, ()>
     Ok((tail, dt))
 }
 
+// TODO: Add check for microseconds and timezones
 pub fn parse_iso_time(input: &str) -> IResult<&str, DateTime<chrono::Local>, ()> {
     let (tail, data) = tuple((
         hour2,

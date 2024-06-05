@@ -24,7 +24,6 @@ pub fn parse_dmy(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     Ok((tail, dt))
 }
 
-#[allow(dead_code)]
 pub fn parse_mdy(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, month) = month1(input)?;
     let (tail, _) = tag("/").parse(tail)?;
