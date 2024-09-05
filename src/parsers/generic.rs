@@ -1,6 +1,7 @@
 
 use nom::{Parser, IResult};
-use nom::bytes::complete::{take, take_while, take_while_m_n};
+use nom::branch::alt;
+use nom::bytes::complete::{tag, take, take_while, take_while_m_n};
 use nom::combinator::map_res;
 
 pub fn year(input: &str) -> IResult<&str, i32, ()> {
@@ -88,4 +89,16 @@ pub fn millisecond(input: &str) -> IResult<&str, u32, ()> {
         take(3u8),
         |ms: &str| ms.parse::<u32>()
     ).parse(input)
+}
+
+pub fn weekday(input: &str) -> IResult<&str, &str, ()> {
+    alt((
+        tag("monday"),
+        tag("tuesday"),
+        tag("wednesday"),
+        tag("thursday"),
+        tag("friday"),
+        tag("saturday"),
+        tag("sunday")
+    )).parse(input)
 }

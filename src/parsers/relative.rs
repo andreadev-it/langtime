@@ -9,6 +9,7 @@ use nom::sequence::tuple;
 use nom::multi::many1;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
+use crate::parsers::generic::weekday;
 
 use crate::utils::{weekday_string_to_int, weekday_to_int, month_future, year_future, month_past, year_past};
 
@@ -156,15 +157,7 @@ pub fn relative_weekdays(input: &str) -> IResult<&str, DateTime<Local>, ()> {
             tag("last")
         )),
         space1,
-        alt((
-            tag("monday"),
-            tag("tuesday"),
-            tag("wednsday"),
-            tag("thursday"),
-            tag("friday"),
-            tag("saturday"),
-            tag("sunday")
-        ))
+        weekday
     )).parse(input)?;
 
     let dt = Local::now().round_subsecs(0);
@@ -198,15 +191,7 @@ pub fn relative_weekdays(input: &str) -> IResult<&str, DateTime<Local>, ()> {
 pub fn current_weekdays(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, (_, day)) = tuple((
         opt(tag("this ")),
-        alt((
-            tag("monday"),
-            tag("tuesday"),
-            tag("wednsday"),
-            tag("thursday"),
-            tag("friday"),
-            tag("saturday"),
-            tag("sunday")
-        ))
+        weekday
     )).parse(input)?;
 
     let dt = Local::now().round_subsecs(0);

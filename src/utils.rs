@@ -44,13 +44,13 @@ pub fn weekday_to_int(day: Weekday) -> i64 {
 
 pub fn weekday_string_to_int(day: &str) -> Result<i64, ()> {
     match day {
-        "monday"   => Ok(0),
-        "tuesday"  => Ok(1),
-        "wednsday" => Ok(2),
-        "thursday" => Ok(3),
-        "friday"   => Ok(4),
-        "saturday" => Ok(5),
-        "sunday"   => Ok(6),
+        "monday"    => Ok(0),
+        "tuesday"   => Ok(1),
+        "wednesday" => Ok(2),
+        "thursday"  => Ok(3),
+        "friday"    => Ok(4),
+        "saturday"  => Ok(5),
+        "sunday"    => Ok(6),
         _ => Err(())
     }
 }
