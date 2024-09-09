@@ -62,7 +62,7 @@ fn main() {
 - [x] Correct month and year calculation
 - [ ] Implement unit tests
 - [x] Add missing time format
-- [ ] Cleanup text before parsing
+- [x] Cleanup text before parsing
 - [x] Add configuration for english dialects (UK/US)
 - [x] Add configuration to force matching to the full string
 
@@ -71,8 +71,9 @@ fn main() {
 - [x] 2024-01-20 (ISO)
 - [x] 20/01/2024
 - [x] yesterday / tomorrow
-- [ ] 01/2024 (beginning of the month)
-- [ ] january 2024 (same as above)
+- [x] 01/2024 (beginning of the month)
+- [x] january 2024 (same as above)
+- [x] 1st jan 2024
 
 ### Times
 - [x] 17:00

@@ -55,6 +55,8 @@ pub fn parse(input: &str) -> Result<DateTime<Local>, NotParsable> {
 /// the desired english dialect, or to decide whether
 /// the string has to be matched in full, or just partially.
 pub fn parse_with_config(input: &str, config: &ParseConfig) -> Result<DateTime<Local>, NotParsable> {
+    let input = input.trim().to_lowercase();
+
     let mut alt_parse = alt((
         times,
         full_datetime(config),
@@ -63,7 +65,7 @@ pub fn parse_with_config(input: &str, config: &ParseConfig) -> Result<DateTime<L
         relative_time_future,
     ));
 
-    match alt_parse(input) {
+    match alt_parse(&input) {
         Ok((tail, dt)) => {
             if tail != "" && config.full_string_match == true {
                 return Err(NotParsable)
@@ -77,9 +79,12 @@ pub fn parse_with_config(input: &str, config: &ParseConfig) -> Result<DateTime<L
 /// A list of english dialects that will influence
 /// how the parser will convert the input string.
 /// For example, using mm-dd-yyyy instead of dd-mm-yyyy.
+///
 #[derive(Eq, PartialEq)]
 pub enum Dialect {
+    /// US dialect (mm-dd-yyyy)
     US,
+    /// UK dialect (dd-mm-yyyy)
     UK
 }
 

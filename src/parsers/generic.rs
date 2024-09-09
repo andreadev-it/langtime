@@ -93,12 +93,55 @@ pub fn millisecond(input: &str) -> IResult<&str, u32, ()> {
 
 pub fn weekday(input: &str) -> IResult<&str, &str, ()> {
     alt((
-        tag("monday"),
-        tag("tuesday"),
-        tag("wednesday"),
-        tag("thursday"),
-        tag("friday"),
-        tag("saturday"),
-        tag("sunday")
+        alt((
+            tag("monday"),
+            tag("tuesday"),
+            tag("wednesday"),
+            tag("thursday"),
+            tag("friday"),
+            tag("saturday"),
+            tag("sunday")
+        )),
+        alt((
+            tag("mon"),
+            tag("tue"),
+            tag("wed"),
+            tag("thu"),
+            tag("fri"),
+            tag("sat"),
+            tag("sun")
+        ))
+    )).parse(input)
+}
+
+pub fn month_name(input: &str) -> IResult<&str, &str, ()> {
+    alt((
+        alt((
+            tag("january"),
+            tag("february"),
+            tag("march"),
+            tag("april"),
+            tag("may"),
+            tag("june"),
+            tag("july"),
+            tag("august"),
+            tag("september"),
+            tag("october"),
+            tag("november"),
+            tag("december")
+        )),
+        alt((
+            tag("jan"),
+            tag("feb"),
+            tag("mar"),
+            tag("apr"),
+            tag("jun"),
+            tag("jul"),
+            tag("aug"),
+            tag("sep"),
+            tag("oct"),
+            tag("nov"),
+            tag("dec")
+        ))
     )).parse(input)
 }

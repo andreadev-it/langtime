@@ -45,12 +45,48 @@ pub fn weekday_to_int(day: Weekday) -> i64 {
 pub fn weekday_string_to_int(day: &str) -> Result<i64, ()> {
     match day {
         "monday"    => Ok(0),
+        "mon"       => Ok(0),
         "tuesday"   => Ok(1),
+        "tue"       => Ok(1),
         "wednesday" => Ok(2),
+        "wed"       => Ok(2),
         "thursday"  => Ok(3),
+        "thu"       => Ok(3),
         "friday"    => Ok(4),
+        "fri"       => Ok(4),
         "saturday"  => Ok(5),
+        "sat"       => Ok(5),
         "sunday"    => Ok(6),
+        "sun"       => Ok(6),
+        _ => Err(())
+    }
+}
+
+pub fn month_string_to_int(month: &str) -> Result<u32, ()> {
+    match month {
+        "january"   => Ok(1),
+        "jan"       => Ok(1),
+        "february"  => Ok(2),
+        "feb"       => Ok(2),
+        "march"     => Ok(3),
+        "mar"       => Ok(3),
+        "april"     => Ok(4),
+        "apr"       => Ok(4),
+        "may"       => Ok(5),
+        "june"      => Ok(6),
+        "jun"       => Ok(6),
+        "july"      => Ok(7),
+        "jul"       => Ok(7),
+        "august"    => Ok(8),
+        "aug"       => Ok(8),
+        "september" => Ok(9),
+        "sep"       => Ok(9),
+        "october"   => Ok(10),
+        "oct"       => Ok(10),
+        "november"  => Ok(11),
+        "nov"       => Ok(11),
+        "december"  => Ok(12),
+        "dec"       => Ok(12),
         _ => Err(())
     }
 }

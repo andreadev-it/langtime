@@ -2,6 +2,7 @@ use chrono::prelude::*;
 use chrono::Duration;
 use nom::branch::alt;
 use nom::character::complete::space0;
+use nom::sequence::terminated;
 use nom::sequence::tuple;
 use nom::{Parser, IResult};
 use nom::bytes::complete::tag;
@@ -9,6 +10,7 @@ use nom::combinator::opt;
 
 use crate::parsers::generic::*;
 use crate::utils::extract_datetime;
+use crate::utils::month_string_to_int;
 
 pub fn parse_dmy(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, day) = day1(input)?;
@@ -38,6 +40,18 @@ pub fn parse_mdy(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     Ok((tail, dt))
 }
 
+pub fn parse_my(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+    let (tail, month) = month1(input)?;
+    let (tail, _) = tag("/").parse(tail)?;
+    let (tail, year) = year(tail)?;
+
+    let dt_opt = Local.with_ymd_and_hms(year, month, 1, 0, 0, 0);
+
+    let dt = extract_datetime(dt_opt)?;
+
+    Ok((tail, dt))
+}
+
 pub fn named_dates(input: &str) -> IResult<&str, DateTime<Local>, ()> {
     let (tail, data) = alt((
         tag("yesterday"),
@@ -53,6 +67,89 @@ pub fn named_dates(input: &str) -> IResult<&str, DateTime<Local>, ()> {
         "today" => Ok((tail, cur)),
         _ => Err(nom::Err::<()>::Error(()))
     }
+}
+
+pub fn spelled_dates_uk(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+    let (tail, (day, _, month_str, year_opt)) = tuple((
+        terminated(
+            day1,
+            opt(alt((
+                tag("st"),
+                tag("nd"),
+                tag("rd"),
+                tag("th")
+            )))
+        ),
+        tag(" "),
+        month_name,
+        opt(tuple((
+            tag(" "),
+            year
+        )))
+    )).parse(input)?;
+
+    let month = month_string_to_int(month_str)
+                .map_err(|_| nom::Err::<()>::Error(()))?;
+
+    let year = match year_opt {
+        Some((_, y)) => y,
+        None => Local::now().year()
+    };
+
+    let dt_opt = Local.with_ymd_and_hms(year, month, day, 0, 0, 0);
+    let dt = extract_datetime(dt_opt)?;
+
+    Ok((tail, dt))
+}
+
+pub fn spelled_dates_us(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+    let (tail, (month_str, _, day, year_opt)) = tuple((
+        month_name,
+        tag(" "),
+        terminated(
+            day1,
+            opt(alt((
+                tag("st"),
+                tag("nd"),
+                tag("rd"),
+                tag("th")
+            )))
+        ),
+        opt(tuple((
+            tuple((
+                opt(tag(",")),
+                tag(" ")
+            )),
+            year
+        )))
+    )).parse(input)?;
+
+    let month = month_string_to_int(month_str)
+                .map_err(|_| nom::Err::<()>::Error(()))?;
+
+    let year = match year_opt {
+        Some((_, y)) => y,
+        None => Local::now().year()
+    };
+
+    let dt_opt = Local.with_ymd_and_hms(year, month, day, 0, 0, 0);
+    let dt = extract_datetime(dt_opt)?;
+
+    Ok((tail, dt))
+}
+
+pub fn named_months(input: &str) -> IResult<&str, DateTime<Local>, ()> {
+    let (tail, m_str) = month_name(input)?;
+    let (tail, _) = tag(" ").parse(tail)?;
+    let (tail, y) = year(tail)?;
+    
+    let m = month_string_to_int(m_str)
+                .map_err(|_| nom::Err::<()>::Error(()))?;
+
+    let dt_opt = Local.with_ymd_and_hms(y, m, 1, 0, 0, 0);
+    let dt = extract_datetime(dt_opt)?;
+
+    Ok((tail, dt))
 }
 
 pub fn parse_time(input: &str) -> IResult<&str, DateTime<Local>, ()> {
